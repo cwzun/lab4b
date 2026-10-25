@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lab 4b</title>
+</head>
+<body>
+    <div id="content">Loading book data...</div>
+</body>
+<script>
+    fetch('books.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load books.json. Please check if the file exists and the server is running.');
+            }
+            return response.json();
+         })
+        .then(data => {
+            const container = document.getElementById('content');
+            container.textContent = '';
+
+            if (!data.books || data.books.length < 2) {
+                throw new Error('Invalid JSON structure or missing book records.');
+            }
+
+            const titlePara = document.createElement('p');
+            titlePara.textContent = `(a) Title of the first book: ${data.books[0].title}`;
+            container.appendChild(titlePara);
+
+            const authorPara = document.createElement('p');
+            authorPara.textContent = `(b) Author of the second book: ${data.books[1].author}`;
+            container.appendChild(authorPara);
+
+            const genreHeading = document.createElement('p');
+            genreHeading.textContent = "(c) Genres Grouped by Book Title:";
+            container.appendChild(genreHeading);
+
+            const genreList = document.createElement('ul');
+            data.books.forEach(book => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${book.title} — ${book.genres.join(', ')}`;
+                genreList.appendChild(listItem);
+            });
+            container.appendChild(genreList);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const container = document.getElementById('content');
+            container.textContent = `Error: ${error.message}`;
+        });
+    </script>
+</html>
